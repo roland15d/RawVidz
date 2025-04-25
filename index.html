@@ -103,9 +103,12 @@
 
   <!-- Age Warning -->
   <div id="age-warning" style="position:fixed; top:0; left:0; width:100%; height:100%; background:black; color:white; display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:9999;">
-    <h2>Adults Only (18+)</h2>
-    <p>You must be 18 years or older to enter this site.</p>
-    <button onclick="document.getElementById('age-warning').style.display='none'" style="padding:10px 20px; background:#e91e63; border:none; color:white; border-radius:5px;">I am 18+</button>
+  <h2>Adults Only (18+)</h2>
+  <p>You must be 18 years or older to enter this site.</p>
+  <div style="margin-top: 15px;">
+    <button onclick="document.getElementById('age-warning').style.display='none'" style="padding:10px 20px; background:#e91e63; border:none; color:white; border-radius:5px; margin-right: 10px;">I am 18+</button>
+    <button onclick="window.location.href='https://www.google.com'" style="padding:10px 20px; background:#555; border:none; color:white; border-radius:5px;">I am under 18</button>
+  </div>
   </div>
 
   <header>
