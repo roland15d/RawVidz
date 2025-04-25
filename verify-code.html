@@ -2,60 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Verify Code - RawVidz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verify Code</title>
   <style>
     body {
-      background: #121212;
+      background-color: #121212;
       color: #fff;
       font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
     .container {
-      max-width: 400px;
-      margin: 80px auto;
-      padding: 30px;
       background: #1e1e1e;
+      padding: 30px;
       border-radius: 10px;
-    }
-    h2 {
-      color: #e91e63;
       text-align: center;
+      width: 90%;
+      max-width: 400px;
     }
-    input, button {
+    input {
       width: 100%;
       padding: 10px;
-      margin-top: 15px;
+      margin: 10px 0;
       border: none;
       border-radius: 5px;
     }
     button {
-      background: #e91e63;
+      padding: 10px 20px;
+      background-color: #e91e63;
       color: white;
-      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
     .error {
       color: red;
-      text-align: center;
-      display: none;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Enter Reset Code</h2>
-    <p>We've sent a code to your email. Enter it below:</p>
-    <input id="codeInput" placeholder="Enter 6-digit code" />
-    <p class="error" id="errorMsg">Invalid code. Try again.</p>
-    <button onclick="verifyCode()">Verify</button>
+    <h2>Enter Verification Code</h2>
+    <p>Please enter the code sent to your email.</p>
+    <input type="text" id="codeInput" placeholder="Verification Code" />
+    <button onclick="checkCode()">Verify</button>
+    <p id="errorMsg" class="error" style="display:none;">Invalid verification code. Please try again.</p>
   </div>
 
   <script>
-    function verifyCode() {
-      const code = document.getElementById("codeInput").value;
-      const correctCode = "123456"; // just a demo, normally this is server-generated
-      if (code === correctCode) {
-        window.location.href = 'reset-password.html';
+    const correctCode = "123456"; // this is just for demo, you'd generate this dynamically in a real site
+
+    function checkCode() {
+      const input = document.getElementById("codeInput").value;
+      const errorMsg = document.getElementById("errorMsg");
+
+      if (input === correctCode) {
+        window.location.href = "reset-password.html";
       } else {
-        document.getElementById("errorMsg").style.display = "block";
+        errorMsg.style.display = "block";
       }
     }
   </script>
