@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Video - RawVidz</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #ff4081;
+    }
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      background-color: #2a2a2a;
+      border: none;
+      color: white;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #ff4081;
+      color: white;
+      padding: 10px;
+      border: none;
+      width: 100%;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload a Video</h1>
+  <form id="uploadForm">
+    <label for="title">Video Title</label>
+    <input type="text" id="title" name="title" required />
+
+    <label for="tags">Tags (separate with commas)</label>
+    <input type="text" id="tags" name="tags" placeholder="#bigass, #ebony" />
+
+    <label for="category">Category</label>
+    <select id="category" name="category">
+      <option value="milf">MILF</option>
+      <option value="bdsm">BDSM</option>
+      <option value="ebony">Ebony</option>
+      <option value="lesbian">Lesbian</option>
+      <option value="anal">Anal</option>
+      <option value="asian">Asian</option>
+      <option value="creampie">Creampie</option>
+      <option value="blowjob">Blowjob</option>
+    </select>
+
+    <label for="videoFile">Select Video File</label>
+    <input type="file" id="videoFile" name="videoFile" accept="video/*" required />
+
+    <label for="thumbnail">Thumbnail (optional)</label>
+    <input type="file" id="thumbnail" name="thumbnail" accept="image/*" />
+
+    <label for="description">Description (optional)</label>
+    <textarea id="description" name="description" rows="4" placeholder="Say something about this video..."></textarea>
+
+    <button type="submit">Upload Video</button>
+  </form>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBcv3Cty_as3sP9ASxZzx4GPXBtqsmARqo",
+      authDomain: "rawvidz-bbdc1.firebaseapp.com",
+      projectId: "rawvidz-bbdc1",
+      storageBucket: "rawvidz-bbdc1.firebasestorage.app",
+      messagingSenderId: "870422503560",
+      appId: "1:870422503560:web:b995cd3d00d30bce893f3d",
+      measurementId: "G-W1H6DRQXKE"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    const form = document.getElementById("uploadForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); // Prevent default form submission
+
+      const title = document.getElementById("title").value.trim();
+      const tags = document.getElementById("tags").value.trim().split(",");
+      const category = document.getElementById("category").value;
+      const description = document.getElementById("description").value.trim();
+      const videoFile = document.getElementById("videoFile").files[0];
+      const thumbnail = document.getElementById("thumbnail").files[0];
+
+      console.log("Selected video file:", videoFile); // Debugging line
+
+      if (!videoFile) {
+        alert("Please select a video file.");
+        return;
+      }
+
+      try {
+        // Upload video to Firebase Storage
+        const videoRef = storage.ref().child("videos/" + Date.now() + "_" + videoFile.name);
+        const videoSnapshot = await videoRef.put(videoFile);
+        console.log("Video upload successful:", videoSnapshot);
+
+        const videoURL = await videoSnapshot.ref.getDownloadURL();
+
+        let thumbnailURL = "";
+        if (thumbnail) {
+          const thumbRef = storage.ref().child("thumbnails/" + Date.now() + "_" + thumbnail.name);
+          const thumbSnapshot = await thumbRef.put(thumbnail);
+          thumbnailURL = await thumbSnapshot.ref.getDownloadURL();
+        }
+
+        // Save video details to Firestore
+        await db.collection("videos").add({
+          title,
+          tags,
+          category,
+          description,
+          videoURL,
+          thumbnailURL,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Video uploaded successfully!");
+        form.reset();
+      } catch (error) {
+        console.error("Error uploading video:", error);
+        alert("Something went wrong. Try again.");
+      }
+    });
+  </script>
+</body>
+  </html>
